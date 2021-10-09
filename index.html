@@ -1,0 +1,341 @@
+# Riellex3.github.io
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>My first web page</title>
+    
+    <style>
+      .imag {
+        width: 350px;
+        height: 350px;
+        margin-right: 30px;
+        object-fit: cover;
+        float: left;
+      }
+      .normalButton {
+        margin-right: 100px;
+      }
+      .normalWhiteScroll {
+        margin-right: 100px;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <script>
+      var x = 1;
+      var pf = Math.floor(Math.random() * 100);
+      var cs = 0;
+      var wAttk = 0;
+      var firstTime = 1;
+      var activeItem =  "";
+      var activeSlots = 0;
+      var activeStr = 0;
+      var activeDex = 0;
+      var activeInt = 0;
+      var activeLuk = 0;
+
+      var mousedOver = 0;
+      var csResults = [-5,-4,-3,-2,-1,0,1,2,3,4,5]
+      
+      class Equipment {
+        constructor(name, attack, slotCount) {
+          this.name = name;
+          this.attack = attack;
+          this.slots = parseInt(slotCount);
+        }
+      }
+      
+      class statEquipment {
+        constructor(name, str, dex, int, luk, slotCount) {
+          this.name = name;
+          this.str = str;
+          this.dex = dex;
+          this.int = int;
+          this.luk = luk;
+          this.slots = slotCount;
+        }
+      }
+
+      BFC = new Equipment('BFC', 10, 5);
+      FS = new Equipment('FS', 2, 5);
+      RS = new Equipment('RS', 1, 7);
+      bBelt = new statEquipment('Black_Belt', 5, 5, 5, 5, 3);
+      
+
+      function csResult(cs) {
+        cs = csResults[Math.floor(Math.random() * csResults.length)];
+        return cs;
+      }
+
+      function scrollItem() {
+        if (firstTime == 1) {
+          wAttk = parseInt(document.getElementById("weaponAttack").value);
+          firstTime = 0
+        }
+        if (document.getElementById("slots").value == 0) {
+          return;
+        }
+        wsCheck = document.getElementById("accept");
+        if (wsCheck.checked) {
+          slotDecrement = 0;
+        } else {
+          slotDecrement = 1;
+        }
+        if (pf > 60) {
+          document.getElementById("image").src = "images/scrollfailed.gif";
+          document.getElementById("image").alt = "An Image of scroll failing";
+          document.getElementById("slots").value -= slotDecrement;
+          document.getElementById("scrollLogs").value += "\nYour cs failed. ";
+          pf = Math.floor(Math.random() * 100);
+        } else {
+          slotDecrement = 1;
+          cs = csResult(cs);
+          document.getElementById("image").src = "images/scrollpassed.gif";
+          document.getElementById("image").alt = "An Image of scroll passing";
+          document.getElementById("scrollLogs").value += "\nYour cs passed. ";
+          if (activeItem != 'Black_Belt') {
+            document.getElementById("scrollLogs").value += "\nYour stats have been increased by " + cs;
+          } else if (activeItem == 'Black_Belt') {
+            if (activeStr != 0) {
+              activeStr += cs;
+              activeStrCS = cs;
+            }
+            if (activeStr <= 0) {
+              activeStr = 0;
+            }
+            cs = csResult(cs);
+            if (activeDex != 0) {
+              activeDex += cs;
+              activeDexCS = cs;
+            }
+            if (activeDex <= 0) {
+              activeDex = 0;
+            }
+            cs = csResult(cs);
+            if (activeInt != 0) {
+              activeInt += cs;
+              activeIntCS = cs;
+            }
+            if (activeInt <= 0) {
+              activeInt = 0;
+            }
+            cs = csResult(cs);
+            if (activeLuk != 0) {
+              activeLuk += cs;
+              activeLukCS = cs;
+            }
+            if (activeLuk <= 0) {
+              activeLuk = 0;
+            }
+
+            document.getElementById("itemStats").value = `STR: ${activeStr} (${activeStrCS})\nDEX: ${activeDex} (${activeDexCS})\nINT: ${activeInt} (${activeIntCS})\nLUK: ${activeLuk} (${activeLukCS})`;
+            document.getElementById("slots").value -= slotDecrement;
+            pf = Math.floor(Math.random() * 100);
+            return;
+          }
+          document.getElementById("slots").value -= slotDecrement;
+          if (wAttk != 0) {
+            wAttk += cs;
+          } 
+          if (wAttk <= 0) {
+            wAttk = 0;
+          }
+          updateItemStats();
+          // cs = csResult(cs);
+          pf = Math.floor(Math.random() * 100);
+        }
+      }
+
+      function wScroll() {
+        wsCheck = document.getElementById("accept").checked;
+      }
+      function resetScrolling() {
+        changeSlots(activeSlots)
+        document.getElementById("scrollLogs").value = "";
+        document.getElementById("itemStats").value = "";
+        wAttk = parseInt(document.getElementById("weaponAttack").value);
+        if (activeItem == "Black_Belt") {
+          activeStr = bBelt.str;
+          activeDex = bBelt.dex;
+          activeInt = bBelt.int;
+          activeLuk = bBelt.luk;
+          document.getElementById("itemStats").value = `STR: ${bBelt.str}\nDEX: ${bBelt.dex}\nINT: ${bBelt.int}\nLUK: ${bBelt.luk}`;
+        }
+        firstTime == 1;
+      }
+      function changeImage(equip) {
+        if (mousedOver == 1) {
+          if (activeItem != equip.name) {
+            switch (equip.name) {
+              case "BFC":
+                document.images["bfcbutton"].src = "/images/cape063.png";
+                break;
+              case "FS":
+                document.images["fsbutton"].src = "/images/fs.png";
+                break;
+              case "RS":
+                document.images["rsbutton"].src = "/images/rs.png";
+                break;
+              case "Black_Belt":
+                document.images["bbeltbutton"].src = "/images/bbelt.png";
+                break;
+            }
+          }
+          mousedOver = 0;
+        } else {
+          switch (equip.name) {
+            case "BFC":
+              document.images["bfcbutton"].src = "/images/cape063u.png";
+              break;
+            case "FS":
+              document.images["fsbutton"].src = "/images/fsu.png";
+              break;
+            case "RS":
+              document.images["rsbutton"].src = "/images/rsu.png";
+              break;
+            case "Black_Belt":
+              document.images["bbeltbutton"].src = "/images/bbeltu.png";
+              break;
+          }
+          mousedOver = 1;
+        }
+      }
+
+      function changeSlots(amount) {
+        document.getElementById("slots").value = amount;
+      }
+      function changeItemStats(equip) {
+        if (activeItem == equip.name) {
+          activeItem = "";
+          return;
+        }
+        activeItem = equip.name;
+        activeSlots = equip.slots;
+        resetButtons();
+        document.getElementById("weaponAttack").value = equip.attack;
+        resetScrolling();
+        changeSlots(equip.slots);
+        if (equip.name == "Black_Belt") {
+          activeStr = equip.str;
+          activeDex = equip.dex;
+          activeInt = equip.int;
+          activeLuk = equip.luk;
+          document.getElementById("itemStats").value = `STR: ${equip.str}\nDEX: ${equip.dex}\nINT: ${equip.int}\nLUK: ${equip.luk}`;
+        }
+      }
+      function updateItemStats() {
+        document.getElementById("itemStats").value += '\nWeapon Attack: ' + wAttk;
+      }
+      function resetButtons() {
+        document.images["bfcbutton"].src = "/images/cape063.png";
+        document.images["fsbutton"].src = "/images/fs.png";
+        document.images["rsbutton"].src = "/images/rs.png";
+        document.images["bbeltbutton"].src = "/images/bbelt.png";
+        if (activeItem == "BFC") {
+          document.images["bfcbutton"].src = "/images/cape063u.png";
+        }
+        if (activeItem == "FS") {
+          document.images["fsbutton"].src = "/images/fsu.png";
+        }
+        if (activeItem == "RS") {
+          document.images["rsbutton"].src = "/images/rsu.png";
+        }
+        if (activeItem == "Black_Belt") {
+          document.images["bbeltbutton"].src = "/images/bbeltu.png";
+        }
+      }
+    </script>
+    <img
+      id="image"
+      src="images/scrollpassed.gif"
+      class="imag"
+      alt="An Image of scroll passing"
+    />
+    <!-- BFC -->
+    <a 
+      class='items' 
+      onMouseOver="changeImage(BFC)" 
+      onMouseOut= "changeImage(BFC)" 
+      onClick = "changeItemStats(BFC)">
+      <img
+        name="bfcbutton" 
+        src="/images/cape063.png" 
+        width="50" 
+        height="50"
+        alt="javascript button"
+      />
+    </a>
+    <a 
+      class='items' 
+      onMouseOver="changeImage(FS)" 
+      onMouseOut= "changeImage(FS)" 
+      onClick = "changeItemStats(FS)">
+      <img
+        name="fsbutton" 
+        src="/images/fs.png" 
+        width="50" 
+        height="50"
+        alt="javascript button"
+      />
+    </a>
+    <a 
+      class='items' 
+      onMouseOver="changeImage(RS)" 
+      onMouseOut= "changeImage(RS)" 
+      onClick = "changeItemStats(RS)">
+      <img
+        name="rsbutton" 
+        src="/images/rs.png" 
+        width="50" 
+        height="50"
+        alt="javascript button"
+      />
+    </a>
+    <a 
+      class='items' 
+      onMouseOver="changeImage(bBelt)" 
+      onMouseOut= "changeImage(bBelt)" 
+      onClick = "changeItemStats(bBelt)">
+      <img
+        name="bbeltbutton" 
+        src="/images/bbelt.png" 
+        width="50" 
+        height="50"
+        alt="javascript button"
+      />
+    </a>
+    <br />
+    <label for="wAttk">Weapon Attack: </label>
+    <input type = "weaponAttack" id="weaponAttack" value="" />
+    <br />    
+    <textarea name="itemStats" id="itemStats" rows="10" cols="70"></textarea>
+    <br />
+    <!-- White Scroll -->
+    <label for="accept">
+      <input
+        type="checkbox"
+        class="normalWhiteSCroll"
+        onclick="wScroll"
+        id="accept"
+        value="White Scroll"
+      />
+      <input type="text" value="White Scroll" />
+    </label>
+    <br /><br /><br />
+    <!-- Scroll Button -->
+    <button type="button" onclick="scrollItem();">Scroll</button>
+    <!-- Reset -->
+    <button type="Reset" class = "normalButton" onclick="resetScrolling();" id="reset">Reset</button>
+    </button>
+    <br /><br /><br /><br />
+    <label for="slots">Slots: </label>
+    <input type="text" id="slots" value=""/>
+    <br /><br /><br /><br /><br /><br /><br /><br /><br />
+    <!-- Scroll Logs -->
+    <textarea name="text" id="scrollLogs" rows="40" cols="70" readOnly>
+      Scroll Logs
+    </textarea>
+  </body>
+</html>
