@@ -4,6 +4,14 @@
     <title>My first web page</title>
     
     <style>
+      body {
+        background-color: black;
+      }
+      textarea {
+        background-color: black;
+        color: white;
+        font-size: 13pt;
+      }
       .imag {
         width: 350px;
         height: 350px;
@@ -17,7 +25,17 @@
       .normalWhiteScroll {
         margin-right: 100px;
       }
-
+      label {
+        color: white;
+      }
+      input {
+        background-color: black;
+        color: white;
+      }
+      button {
+        background-color: black;
+        color: white;
+      }
     </style>
   </head>
 
@@ -77,10 +95,14 @@
           return;
         }
         wsCheck = document.getElementById("accept");
+        pfCheck = document.getElementById("autopass");
         if (wsCheck.checked) {
           slotDecrement = 0;
         } else {
           slotDecrement = 1;
+        }
+        if (pfCheck.checked) {
+          pf = 0;
         }
         if (pf > 60) {
           document.getElementById("image").src = "images/scrollfailed.gif";
@@ -147,9 +169,6 @@
         }
       }
 
-      function wScroll() {
-        wsCheck = document.getElementById("accept").checked;
-      }
       function resetScrolling() {
         changeSlots(activeSlots)
         document.getElementById("scrollLogs").value = "";
@@ -160,9 +179,19 @@
           activeDex = bBelt.dex;
           activeInt = bBelt.int;
           activeLuk = bBelt.luk;
-          document.getElementById("itemStats").value = `STR: ${bBelt.str}\nDEX: ${bBelt.dex}\nINT: ${bBelt.int}\nLUK: ${bBelt.luk}`;
+          document.getElementById("itemStats").value = `\nSTR: ${bBelt.str}\nDEX: ${bBelt.dex}\nINT: ${bBelt.int}\nLUK: ${bBelt.luk}`;
         }
         firstTime == 1;
+      }
+      function logHistory() {
+        if (activeItem == "") {
+          return;
+        } else if (activeItem != "Black_Belt") {
+          document.getElementById("history").value += `\n${activeItem} ${wAttk}`;
+        }
+        else {
+          document.getElementById("history").value += `\n${activeItem} ${activeStr} ${activeDex} ${activeInt} ${activeLuk}`;
+        }
       }
       function changeImage(equip) {
         if (mousedOver == 1) {
@@ -210,6 +239,7 @@
           activeItem = "";
           return;
         }
+        firstTime = 1;
         activeItem = equip.name;
         activeSlots = equip.slots;
         resetButtons();
@@ -226,6 +256,9 @@
       }
       function updateItemStats() {
         document.getElementById("itemStats").value += '\nWeapon Attack: ' + wAttk;
+      }
+      function autopass() {
+        pfCheck = document.getElementById("autopass").checked;
       }
       function resetButtons() {
         document.images["bfcbutton"].src = "/images/cape063.png";
@@ -309,24 +342,31 @@
     <label for="wAttk">Weapon Attack: </label>
     <input type = "weaponAttack" id="weaponAttack" value="" />
     <br />    
-    <textarea name="itemStats" id="itemStats" rows="10" cols="70"></textarea>
+    <textarea name="itemStats" id="itemStats" rows="8" cols="20" readOnly></textarea>
+    <textarea name="history" id="history" rows="8" cols="50" readOnly>
+        History</textarea>
     <br />
     <!-- White Scroll -->
     <label for="accept">
       <input
         type="checkbox"
         class="normalWhiteSCroll"
-        onclick="wScroll"
         id="accept"
-        value="White Scroll"
       />
       <input type="text" value="White Scroll" />
+      <br /><br />
+      <input
+        type="checkbox"
+        class="autoPass"
+        id="autopass"
+      />
+      <input type="text" value="100% Pass" />
     </label>
     <br /><br /><br />
     <!-- Scroll Button -->
     <button type="button" onclick="scrollItem();">Scroll</button>
     <!-- Reset -->
-    <button type="Reset" class = "normalButton" onclick="resetScrolling();" id="reset">Reset</button>
+    <button type="Reset" class = "normalButton" onclick="logHistory(),resetScrolling()" id="reset">Reset</button>
     </button>
     <br /><br /><br /><br />
     <label for="slots">Slots: </label>
