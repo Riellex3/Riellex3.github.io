@@ -78,7 +78,7 @@
       BFC = new Equipment('BFC', 10, 5);
       FS = new Equipment('FS', 2, 5);
       RS = new Equipment('RS', 1, 7);
-      bBelt = new statEquipment('Black_Belt', 5, 5, 5, 5, 3);
+      bBelt = new statEquipment('Black Belt', 5, 5, 5, 5, 3);
       
 
       function csResult(cs) {
@@ -116,9 +116,9 @@
           document.getElementById("image").src = "images/scrollpassed.gif";
           document.getElementById("image").alt = "An Image of scroll passing";
           document.getElementById("scrollLogs").value += "\nYour cs passed. ";
-          if (activeItem != 'Black_Belt') {
+          if (activeItem != 'Black Belt') {
             document.getElementById("scrollLogs").value += "\nYour stats have been increased by " + cs;
-          } else if (activeItem == 'Black_Belt') {
+          } else if (activeItem == 'Black Belt') {
             if (activeStr != 0) {
               activeStr += cs;
               activeStrCS = cs;
@@ -174,7 +174,7 @@
         document.getElementById("scrollLogs").value = "";
         document.getElementById("itemStats").value = "";
         wAttk = parseInt(document.getElementById("weaponAttack").value);
-        if (activeItem == "Black_Belt") {
+        if (activeItem == "Black Belt") {
           activeStr = bBelt.str;
           activeDex = bBelt.dex;
           activeInt = bBelt.int;
@@ -186,7 +186,7 @@
       function logHistory() {
         if (activeItem == "") {
           return;
-        } else if (activeItem != "Black_Belt") {
+        } else if (activeItem != "Black Belt") {
           document.getElementById("history").value += `\n${activeItem} ${wAttk}`;
         }
         else {
@@ -206,7 +206,7 @@
               case "RS":
                 document.images["rsbutton"].src = "/images/rs.png";
                 break;
-              case "Black_Belt":
+              case "Black Belt":
                 document.images["bbeltbutton"].src = "/images/bbelt.png";
                 break;
             }
@@ -223,7 +223,7 @@
             case "RS":
               document.images["rsbutton"].src = "/images/rsu.png";
               break;
-            case "Black_Belt":
+            case "Black Belt":
               document.images["bbeltbutton"].src = "/images/bbeltu.png";
               break;
           }
@@ -246,7 +246,7 @@
         document.getElementById("weaponAttack").value = equip.attack;
         resetScrolling();
         changeSlots(equip.slots);
-        if (equip.name == "Black_Belt") {
+        if (equip.name == "Black Belt") {
           activeStr = equip.str;
           activeDex = equip.dex;
           activeInt = equip.int;
@@ -274,7 +274,7 @@
         if (activeItem == "RS") {
           document.images["rsbutton"].src = "/images/rsu.png";
         }
-        if (activeItem == "Black_Belt") {
+        if (activeItem == "Black Belt") {
           document.images["bbeltbutton"].src = "/images/bbeltu.png";
         }
       }
