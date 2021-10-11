@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>My first web page</title>
-    
+
     <style>
       body {
         background-image: url("../images/ellin.png");
@@ -32,8 +32,12 @@
         color: white;
         font-size: 14pt;
       }
-      input {
+      input[type="checkbox"] {
+        width: 10px;
+      }
+      input[type="text"] {
         background-color: black;
+        opacity: 0.5;
         color: white;
         font-size: 14pt;
       }
@@ -53,16 +57,16 @@
       var cs = 0;
       var wAttk = 0;
       var firstTime = 1;
-      var activeItem =  "";
+      var activeItem = "";
       var activeSlots = 0;
       var activeStr = 0;
       var activeDex = 0;
       var activeInt = 0;
       var activeLuk = 0;
-
+      var itemTouchedFlag = false;
       var mousedOver = 0;
-      var csResults = [-5,-4,-3,-2,-1,0,1,2,3,4,5]
-      
+      var csResults = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
+
       class Equipment {
         constructor(name, attack, slotCount) {
           this.name = name;
@@ -70,7 +74,7 @@
           this.slots = parseInt(slotCount);
         }
       }
-      
+
       class statEquipment {
         constructor(name, str, dex, int, luk, slotCount) {
           this.name = name;
@@ -82,11 +86,10 @@
         }
       }
 
-      BFC = new Equipment('BFC', 10, 5);
-      FS = new Equipment('FS', 2, 5);
-      RS = new Equipment('RS', 1, 7);
-      bBelt = new statEquipment('Black Belt', 5, 5, 5, 5, 3);
-      
+      BFC = new Equipment("BFC", 10, 5);
+      FS = new Equipment("FS", 2, 5);
+      RS = new Equipment("RS", 1, 7);
+      bBelt = new statEquipment("Black Belt", 5, 5, 5, 5, 3);
 
       function csResult(cs) {
         cs = csResults[Math.floor(Math.random() * csResults.length)];
@@ -96,9 +99,26 @@
       function scrollItem() {
         if (firstTime == 1) {
           wAttk = parseInt(document.getElementById("weaponAttack").value);
-          firstTime = 0
+          firstTime = 0;
         }
         if (document.getElementById("slots").value == 0) {
+          return;
+        }
+        if (
+          document.getElementById("slots").value < 0 ||
+          isNaN(document.getElementById("slots").value)
+        ) {
+          document.getElementById("itemStats").value +=
+            "\nPlease enter a valid slot input";
+          return;
+        }
+        if (
+          activeItem != "Black Belt" &&
+          (document.getElementById("weaponAttack").value < 0 ||
+            isNaN(document.getElementById("weaponAttack").value))
+        ) {
+          document.getElementById("itemStats").value +=
+            "\nPlease enter a valid Weapon Attack input";
           return;
         }
         wsCheck = document.getElementById("accept");
@@ -111,6 +131,7 @@
         if (pfCheck.checked) {
           pf = 0;
         }
+        itemTouchedFlag = true;
         if (pf > 60) {
           document.getElementById("image").src = "images/scrollfailed.gif";
           document.getElementById("image").alt = "An Image of scroll failing";
@@ -123,9 +144,10 @@
           document.getElementById("image").src = "images/scrollpassed.gif";
           document.getElementById("image").alt = "An Image of scroll passing";
           document.getElementById("scrollLogs").value += "\nYour cs passed. ";
-          if (activeItem != 'Black Belt') {
-            document.getElementById("scrollLogs").value += "\nYour stats have been increased by " + cs;
-          } else if (activeItem == 'Black Belt') {
+          if (activeItem != "Black Belt") {
+            document.getElementById("scrollLogs").value +=
+              "\nYour stats have been increased by " + cs;
+          } else if (activeItem == "Black Belt") {
             if (activeStr != 0) {
               activeStr += cs;
               activeStrCS = cs;
@@ -158,7 +180,9 @@
               activeLuk = 0;
             }
 
-            document.getElementById("itemStats").value = `\nSTR: ${activeStr} (${activeStrCS})\nDEX: ${activeDex} (${activeDexCS})\nINT: ${activeInt} (${activeIntCS})\nLUK: ${activeLuk} (${activeLukCS})`;
+            document.getElementById(
+              "itemStats"
+            ).value = `\nSTR: ${activeStr} (${activeStrCS})\nDEX: ${activeDex} (${activeDexCS})\nINT: ${activeInt} (${activeIntCS})\nLUK: ${activeLuk} (${activeLukCS})`;
             document.getElementById("slots").value -= slotDecrement;
             pf = Math.floor(Math.random() * 100);
             return;
@@ -166,7 +190,7 @@
           document.getElementById("slots").value -= slotDecrement;
           if (wAttk != 0) {
             wAttk += cs;
-          } 
+          }
           if (wAttk <= 0) {
             wAttk = 0;
           }
@@ -177,7 +201,7 @@
       }
 
       function resetScrolling() {
-        changeSlots(activeSlots)
+        changeSlots(activeSlots);
         document.getElementById("scrollLogs").value = "";
         document.getElementById("itemStats").value = "";
         wAttk = parseInt(document.getElementById("weaponAttack").value);
@@ -186,18 +210,27 @@
           activeDex = bBelt.dex;
           activeInt = bBelt.int;
           activeLuk = bBelt.luk;
-          document.getElementById("itemStats").value = `\nSTR: ${bBelt.str}\nDEX: ${bBelt.dex}\nINT: ${bBelt.int}\nLUK: ${bBelt.luk}`;
+          document.getElementById(
+            "itemStats"
+          ).value = `\nSTR: ${bBelt.str}\nDEX: ${bBelt.dex}\nINT: ${bBelt.int}\nLUK: ${bBelt.luk}`;
         }
         firstTime == 1;
+        itemTouchedFlag = false;
       }
       function logHistory() {
+        if (itemTouchedFlag == false) {
+          return;
+        }
         if (activeItem == "") {
           return;
         } else if (activeItem != "Black Belt") {
-          document.getElementById("history").value += `\n${activeItem} ${wAttk}`;
-        }
-        else {
-          document.getElementById("history").value += `\n${activeItem} ${activeStr} ${activeDex} ${activeInt} ${activeLuk}`;
+          document.getElementById(
+            "history"
+          ).value += `\n${activeItem} ${wAttk}`;
+        } else {
+          document.getElementById(
+            "history"
+          ).value += `\n${activeItem} ${activeStr} ${activeDex} ${activeInt} ${activeLuk}`;
         }
       }
       function changeImage(equip) {
@@ -258,11 +291,15 @@
           activeDex = equip.dex;
           activeInt = equip.int;
           activeLuk = equip.luk;
-          document.getElementById("itemStats").value = `\nSTR: ${equip.str}\nDEX: ${equip.dex}\nINT: ${equip.int}\nLUK: ${equip.luk}`;
+          document.getElementById(
+            "itemStats"
+          ).value = `\nSTR: ${equip.str}\nDEX: ${equip.dex}\nINT: ${equip.int}\nLUK: ${equip.luk}`;
         }
+        itemTouchedFlag = false;
       }
       function updateItemStats() {
-        document.getElementById("itemStats").value += '\nWeapon Attack: ' + wAttk;
+        document.getElementById("itemStats").value +=
+          "\nWeapon Attack: " + wAttk;
       }
       function autopass() {
         pfCheck = document.getElementById("autopass").checked;
@@ -293,97 +330,117 @@
       alt="An Image of scroll passing"
     />
     <!-- BFC -->
-    <a 
-      class='items' 
-      onMouseOver="changeImage(BFC)" 
-      onMouseOut= "changeImage(BFC)" 
-      onClick = "changeItemStats(BFC)">
+    <a
+      class="items"
+      onMouseOver="changeImage(BFC)"
+      onMouseOut="changeImage(BFC)"
+      onClick="logHistory(), changeItemStats(BFC)"
+    >
       <img
-        name="bfcbutton" 
-        src="/images/cape063.png" 
-        width="50" 
+        name="bfcbutton"
+        src="/images/cape063.png"
+        width="50"
         height="50"
         alt="javascript button"
       />
     </a>
-    <a 
-      class='items' 
-      onMouseOver="changeImage(FS)" 
-      onMouseOut= "changeImage(FS)" 
-      onClick = "changeItemStats(FS)">
+    <a
+      class="items"
+      onMouseOver="changeImage(FS)"
+      onMouseOut="changeImage(FS)"
+      onClick="logHistory(), changeItemStats(FS)"
+    >
       <img
-        name="fsbutton" 
-        src="/images/fs.png" 
-        width="50" 
+        name="fsbutton"
+        src="/images/fs.png"
+        width="50"
         height="50"
         alt="javascript button"
       />
     </a>
-    <a 
-      class='items' 
-      onMouseOver="changeImage(RS)" 
-      onMouseOut= "changeImage(RS)" 
-      onClick = "changeItemStats(RS)">
+    <a
+      class="items"
+      onMouseOver="changeImage(RS)"
+      onMouseOut="changeImage(RS)"
+      onClick="logHistory(), changeItemStats(RS)"
+    >
       <img
-        name="rsbutton" 
-        src="/images/rs.png" 
-        width="50" 
+        name="rsbutton"
+        src="/images/rs.png"
+        width="50"
         height="50"
         alt="javascript button"
       />
     </a>
-    <a 
-      class='items' 
-      onMouseOver="changeImage(bBelt)" 
-      onMouseOut= "changeImage(bBelt)" 
-      onClick = "changeItemStats(bBelt)">
+    <a
+      class="items"
+      onMouseOver="changeImage(bBelt)"
+      onMouseOut="changeImage(bBelt)"
+      onClick="logHistory(), changeItemStats(bBelt)"
+    >
       <img
-        name="bbeltbutton" 
-        src="/images/bbelt.png" 
-        width="50" 
+        name="bbeltbutton"
+        src="/images/bbelt.png"
+        width="50"
         height="50"
         alt="javascript button"
       />
     </a>
     <br />
-    <label for="wAttk">Weapon Attack:
-      <input type = "weaponAttack" id="weaponAttack" value="" />
+    <label for="wAttk"
+      >Weapon Attack:
+      <input
+        type="text"
+        id="weaponAttack"
+        value=""
+        maxlength="3"
+        placeholder="Weapon Attack of Item"
+      />
     </label>
-    <br />    
-    <textarea name="itemStats" id="itemStats" rows="8" cols="20" readOnly></textarea>
-    <textarea name="history" id="history" rows="8" cols="50" readOnly>
-        History</textarea>
+    <br />
+    <textarea
+      name="itemStats"
+      id="itemStats"
+      rows="8"
+      cols="20"
+      readonly
+    ></textarea>
+    <textarea name="history" id="history" rows="8" cols="50" readonly>
+        History</textarea
+    >
     <br />
     <!-- White Scroll -->
-    <label for="accept">
-      <input
-        type="checkbox"
-        class="normalWhiteSCroll"
-        id="accept"
-      />
-      White Scroll
-      <br /><br />
-    </label>
-    <label for="autopass">
-      <input
-        type="checkbox"
-        class="autoPass"
-        id="autopass"
-      />
-      100% Pass
-    </label>
+    <div class="checkBox">
+      <label for="accept">
+        <input type="checkbox" class="normalWhiteSCroll" id="accept" />
+        White Scroll
+        <br /><br />
+      </label>
+      <label for="autopass">
+        <input type="checkbox" class="autoPass" id="autopass" />
+        100% Pass
+      </label>
+    </div>
     <br /><br /><br />
     <!-- Scroll Button -->
-    <button type="button" onclick="scrollItem();">Scroll</button>
+    <button type="button" onclick="scrollItem();" id="scrollItem">
+      Scroll
+    </button>
     <!-- Reset -->
-    <button type="Reset" class = "normalButton" onclick="logHistory(),resetScrolling()" id="reset">Reset</button>
+    <button
+      type="Reset"
+      class="normalButton"
+      onclick="logHistory(),resetScrolling()"
+      id="reset"
+    >
+      Reset
     </button>
     <br /><br /><br /><br />
     <label for="slots">Slots: </label>
-    <input type="text" id="slots" value=""/>
-    <br /><br /><br /><br /><br /><br /><br /><br /><br />
+    <input type="text" id="slots" value="" placeholder="Number of slots" />
+    <br /><br /><br />
     <!-- Scroll Logs -->
-    <textarea name="text" id="scrollLogs" rows="40" cols="70" readOnly>
+    <textarea name="text" id="scrollLogs" rows="40" cols="70" readonly>
       Scroll Logs
     </textarea>
   </body>
