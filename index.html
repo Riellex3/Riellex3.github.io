@@ -5,10 +5,12 @@
     
     <style>
       body {
-        background-color: black;
+        background-image: url("images/ellin.png");
+        background-size: 200%;
+        background-repeat: repeat-x;
       }
       textarea {
-        background-color: black;
+        background-color: transparent;
         color: white;
         font-size: 13pt;
       }
@@ -27,14 +29,22 @@
       }
       label {
         color: white;
+        font-size: 14pt;
+        -webkit-text-stroke-width: 1px;
+        -webkit-text-stroke-color: black;
       }
       input {
         background-color: black;
         color: white;
+        
+        -webkit-text-stroke-width: 1px;
+        -webkit-text-stroke-color: black;
       }
       button {
         background-color: black;
         color: white;
+        width: 100px;
+        height: 100px;
       }
     </style>
   </head>
@@ -339,8 +349,9 @@
       />
     </a>
     <br />
-    <label for="wAttk">Weapon Attack: </label>
-    <input type = "weaponAttack" id="weaponAttack" value="" />
+    <label for="wAttk">Weapon Attack:
+      <input type = "weaponAttack" id="weaponAttack" value="" />
+    </label>
     <br />    
     <textarea name="itemStats" id="itemStats" rows="8" cols="20" readOnly></textarea>
     <textarea name="history" id="history" rows="8" cols="50" readOnly>
@@ -355,6 +366,8 @@
       />
       White Scroll
       <br /><br />
+    </label>
+    <label for="autopass">
       <input
         type="checkbox"
         class="autoPass"
